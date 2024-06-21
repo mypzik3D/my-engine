@@ -1,3 +1,0 @@
-/home/mypzuk/Projects/3D-engine/build/CMakeFiles/my-engine.dir
-/home/mypzuk/Projects/3D-engine/build/CMakeFiles/edit_cache.dir
-/home/mypzuk/Projects/3D-engine/build/CMakeFiles/rebuild_cache.dir
