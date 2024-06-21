@@ -34,7 +34,6 @@ triangle* mesh::add_triangle(vec3f pos1, vec3f pos2, vec3f pos3){
     tri->dots[0] = dts[0];
     tri->dots[1] = dts[1];
     tri->dots[2] = dts[2];
-    printf(">>>added trangle\n");
     triangles.push_back(tri);
     return tri;
 }
@@ -117,6 +116,7 @@ mesh cube(float size, vec3f offset, trform3 trform){
         vec3f(0,size,size)-offset,
         vec3f(0,size,0)-offset
     );
+    printf("> created cube mesh\n");
     return cube;
 }
 
