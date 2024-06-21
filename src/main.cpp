@@ -21,6 +21,7 @@ int main(){
     cam.size = vec2(800, 600);
     trform3 tr;
     tr.pos = vec3f(0, 0, 150);
+    tr.rot = vec3f(0,0,30);
     mesh mesh = cube(20,vec3f(10,10,10),tr);
 
 
@@ -36,8 +37,8 @@ int main(){
         window.clear();
 
         a+=1;
-        mesh.trform.rot.z = a;
-        //mesh.trform.rot.x = a;
+        //mesh.trform.rot.z = a;
+        mesh.trform.rot.x = a;
         get_trform(mesh.trform);
 
         cam.draw(window, mesh, sf::Color(0,0,0,0));
