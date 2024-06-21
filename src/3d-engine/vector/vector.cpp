@@ -180,23 +180,4 @@ vec3f calc_dot_global(trform3& trform, vec3f& pos){
     }
     return vec;
 }
-vec3f calc_dot_local(trform3 local, vec3f pos){
-    vec3f vec(0,0,0);
-    if(pos.x != 0 && pos.y != 0 && pos.z != 0){	
-        vec2f vecdot(pos.x, pos.y);
-        double lenght = sqrt(pow(vecdot.x, 2)+pow(vecdot.y, 2));
-        double deg = rad_to_deg(asin(vecdot.y/lenght));
-
-        vec.x = cos(deg_to_rad(deg-(local.rot.x)))*lenght-local.pos.x;
-        vec.y = sin(deg_to_rad(deg-(local.rot.y)))*lenght-local.pos.y;
-
-        vec2f vecdot2(pos.y, pos.z);
-        double lenght2 = sqrt(pow(vecdot2.x, 2)+pow(vecdot2.y, 2));
-        vec.z = sqrt(pow(lenght2, 2)+pow(vec.y, 2))+local.pos.z;
-    }else{
-        vec=vec+local.pos;
-    }
-    return vec;
-}
-
 

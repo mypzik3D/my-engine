@@ -2,15 +2,20 @@
 #include <math.h>
 #include <iostream>
 
-camera::camera(){
+camera::camera(vec2 windsize, float lengh, trform3 trform){
+    this->size = windsize;
+    this->lengh = lengh;
+    this->trform=trform;
 }
-vec2f calc_to_camera_pos(vec3f& pos, camera cam){
+camera::camera(){}
+
+vec2f calc_to_camera_pos(vec3f pos, camera cam){
     vec2f ret(0,0);
 
-    double a = (pos.x*cam.size.x)/((pos.z*cam.size.x/2)/cam.lenght);
+    double a = (pos.x*cam.size.x)/((pos.z*cam.size.x/2)/cam.lengh);
     ret.x = a;
 
-    a = (pos.y*cam.size.y)/((pos.z*cam.size.y/2)/cam.lenght);
+    a = (pos.y*cam.size.y)/((pos.z*cam.size.y/2)/cam.lengh);
     ret.y = a;
     return ret;	
 }

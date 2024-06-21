@@ -595,4 +595,3 @@ float deg_to_rad(float deg);
 
 
 vec3f calc_dot_global(trform3& mesh, vec3f& pos);
-vec3f calc_dot_local(trform3 local, vec3f pos);
