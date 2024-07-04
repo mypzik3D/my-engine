@@ -2,7 +2,7 @@
 #include "../vector/vector.hpp"
 #include <vector>
 #include <memory>
-
+#include <SFML/Graphics.hpp>
 class dot{
     public:
         vec3f pos{0,0,0};
@@ -13,7 +13,9 @@ class dot{
 class triangle{
     public:
         dot* dots[3];
-        vec3f normal{0,0,0};
+        vec3f normal;
+        vec3f glnorm;
+        sf::Color color;
     	triangle();
 };
 
@@ -25,6 +27,8 @@ class mesh{
 	
 	void calc_dots();
 	triangle* add_triangle(vec3f pos1, vec3f pos2, vec3f pos3);
+	triangle* add_triangle(vec3f pos1, vec3f pos2, vec3f pos3, vec3f norm);
+	triangle* add_triangle(dot* pos1, dot* pos2, dot* pos3);
         void del_triangle(int index);
         void del_triangle(triangle& triangle);
         
@@ -32,3 +36,4 @@ class mesh{
 	mesh();
 };
 mesh cube(float size, vec3f offset, trform3 trform);
+void load_obj_file(const std::string& filename, mesh& mesh);

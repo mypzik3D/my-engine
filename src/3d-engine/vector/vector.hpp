@@ -592,6 +592,6 @@ class trform2d{
 
 float rad_to_deg(float rad);
 float deg_to_rad(float deg);
-
+float lengh3(vec3f vec);
 
 vec3f calc_dot_global(trform3& mesh, vec3f& pos);
