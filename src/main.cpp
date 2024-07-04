@@ -14,11 +14,11 @@ int main(){
     camera cam(vec2(800, 600), 7, trform3());
 
     trform3 tr;
-    tr.pos = vec3f(0, 0, 100); // position
+    tr.pos = vec3f(0, 0, 50); // position
     tr.rot = vec3f(30, 0, 0);
     tr.scl = vec3f(10,10,10); // scale
     mesh test;// make cube mesh
-    load_obj_file("../obj/monkey.obj", test); // all object files in dir ../obj/ from 3dzavr sfml
+    load_obj_file("../obj/O^O.obj", test); // all object files in dir ../obj/ ~90% from 3dzavr sfml
     test.trform = tr;
     float angle;
 
