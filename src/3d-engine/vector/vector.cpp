@@ -184,4 +184,111 @@ vec3f calc_dot_global(trform3& trform, vec3f& pos){
     }
     return vec;
 }
+vec3f calc_dot_local(trform3& trform, vec3f& pos){
+    vec3f vec;
+    if(pos.x == 0 && pos.y == 0 && pos.z == 0){
+        return vec;
+    }else{
+        vec2f coef(0,0);
+        vec2d vecdot(pos.x*trform.scl.x, pos.y*trform.scl.y);
+        if(vecdot.x >= 0)
+            coef.x = 1;
+        else{
+            vecdot.x*=-1;
+            coef.x = -1;
+        }
+        if(vecdot.y >= 0)
+            coef.y = 1;
+        else{
+            vecdot.y*=-1;
+            coef.y = -1;
+        }
+        double lengh = sqrt(pow(vecdot.x, 2)+pow(vecdot.y, 2));
+        double deg;
+        if(lengh != 0){
+            deg = rad_to_deg(asin(vecdot.y/lengh));
+            if(coef.x != coef.y){
+                vec.x = cos(deg_to_rad(deg-trform.rot.z+deg180(coef.x)))*lengh;
+                vec.y = sin(deg_to_rad(deg-trform.rot.z+deg180(coef.y)))*lengh;
+            }
+            else if(coef.x == -1){
+                vec.x = cos(deg_to_rad(deg-trform.rot.z*coef.x))*lengh*coef.x;
+                vec.y = sin(deg_to_rad(deg-trform.rot.z*coef.y))*lengh*coef.y; 
+            }
+            else{
+                vec.x = cos(deg_to_rad(deg-trform.rot.z*-coef.x))*lengh*coef.x;
+                vec.y = sin(deg_to_rad(deg-trform.rot.z*-coef.y))*lengh*coef.y; 
+            }
+            //printf("%f\n",cos(deg_to_rad(deg+trform.rot.z)));
+            //printf("%f\n",sin(deg_to_rad(deg+trform.rot.z)));
+        }
 
+        vecdot = vec2d(vec.x, pos.z*trform.scl.z);
+        if(vecdot.x >= 0)
+            coef.x = 1;
+        else{
+            vecdot.x*=-1;
+            coef.x = -1;
+        }
+        if(vecdot.y >= 0)
+            coef.y = 1;
+        else{
+            vecdot.y*=-1;
+            coef.y = -1;
+        }
+        lengh = sqrt(pow(vecdot.x, 2)+pow(vecdot.y, 2));
+        if(lengh != 0){
+            deg = rad_to_deg(asin(vecdot.y/lengh));
+            if(coef.x != coef.y){
+                vec.x = cos(deg_to_rad(deg-trform.rot.y+deg180(coef.x)))*lengh;
+                vec.z = sin(deg_to_rad(deg-trform.rot.y+deg180(coef.y)))*lengh; 
+            }
+            else if(coef.x == -1){
+                vec.x = cos(deg_to_rad(deg-trform.rot.y*coef.x))*lengh*coef.x;
+                vec.z = sin(deg_to_rad(deg-trform.rot.y*coef.y))*lengh*coef.y; 
+            }
+            else{
+                vec.x = cos(deg_to_rad(deg-trform.rot.y*-coef.x))*lengh*coef.x;
+                vec.z = sin(deg_to_rad(deg-trform.rot.y*-coef.y))*lengh*coef.y; 
+            }
+            //printf("%f\n",cos(deg_to_rad(deg+trform.rot.y)));
+            //printf("%f\n",sin(deg_to_rad(deg+trform.rot.y)));
+        }
+
+        vecdot = vec2d(vec.y, vec.z);
+        if(vecdot.x >= 0)
+            coef.x = 1;
+        else{
+            vecdot.x*=-1;
+            coef.x = -1;
+        }
+        if(vecdot.y >= 0)
+            coef.y = 1;
+        else{
+            vecdot.y*=-1;
+            coef.y = -1;
+        }
+        lengh = sqrt(pow(vecdot.x, 2)+pow(vecdot.y, 2));
+        if(lengh != 0){
+            deg = rad_to_deg(asin(vecdot.y/lengh));
+            if(coef.x != coef.y){
+                vec.y = cos(deg_to_rad(deg-trform.rot.x+deg180(coef.x)))*lengh;
+                vec.z = sin(deg_to_rad(deg-trform.rot.x+deg180(coef.y)))*lengh;   
+            }
+            else if(coef.x == -1){
+                vec.y = cos(deg_to_rad(deg-trform.rot.x*coef.x))*lengh*coef.x;
+                vec.z = sin(deg_to_rad(deg-trform.rot.x*coef.y))*lengh*coef.y; 
+            }
+            else{
+                vec.y = cos(deg_to_rad(deg-trform.rot.x*-coef.x))*lengh*coef.x;
+                vec.z = sin(deg_to_rad(deg-trform.rot.x*-coef.y))*lengh*coef.y; 
+            }
+            //printf("%f\n",cos(deg_to_rad(deg+trform.rot.x)));
+            //printf("%f\n",sin(deg_to_rad(deg+trform.rot.x)));
+
+        }
+        vec-=trform.pos;
+    }
+    return vec;
+
+}

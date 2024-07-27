@@ -9,9 +9,9 @@ camera::camera(vec2 windsize, float lengh, trform3 trform){
 }
 camera::camera(){}
 
-vec2f calc_to_camera_pos(vec3f pos, camera cam){
+vec2f calc_to_camera_pos(vec3f position, camera cam){
     vec2f ret(0,0);
-
+    vec3f pos = calc_dot_local(cam.trform, position);
     double a = (pos.x*cam.size.x)/((pos.z*cam.size.x/2)/cam.lengh);
     ret.x = a;
 
