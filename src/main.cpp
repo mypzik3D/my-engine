@@ -2,10 +2,10 @@
 #include "3d-engine/animations/anim.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <math.h>
 
 
-
-int main(){
+int main(){    
     sf::Clock deltime;
     float nt = 1;
     float lt = 0;
@@ -13,10 +13,10 @@ int main(){
     trform3 posit;
     camera cam(vec2(800, 600), 7, posit);
     cam.clip_forward = 30;
-    cam.lengh = 3;
+    cam.lengh = 5;
 
     trform3 tr;
-    tr.pos = vec3f(0, -50, 230); // position
+    tr.pos = vec3f(0, -40, 100); // position
     tr.rot = vec3f(0, 180, 0);
     tr.scl = vec3f(10,10,10); // scale
     mesh test;// make cube mesh
@@ -24,7 +24,7 @@ int main(){
     test.trform = tr;
     float angle;
 
-    add_animation(&test.trform.rot.y, 540, 1000); //rotate mesh on 1000 ticks(he dont use deltatime)
+    //add_animation(&test.trform.rot.y, 540, 1000); //rotate mesh on 1000 ticks(he dont use deltatime)
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "loading..."); //create window
     sf::Mouse::setPosition(sf::Vector2i(window.getSize().x/2, window.getSize().y/2), window);
@@ -43,7 +43,6 @@ int main(){
         window.setTitle("3D, real 3D! [FPS:"+std::to_string((int)fps)+"]"); //rename window title
         *dt = nt/lt*1000;
         lt = nt;
-
         // movement
         sf::Vector2i mpos = sf::Mouse::getPosition(window);
         vec2 offset(mpos.x-(window.getSize().x/2), mpos.y-(window.getSize().y/2));
@@ -51,19 +50,28 @@ int main(){
         cam.trform.rot.y+=offset.x*0.1;
         cam.trform.rot.x+=offset.y*-0.1;
      
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
-            cam.trform.pos.x+=1;
-        }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
-            cam.trform.pos.x-=1;
-        }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
-            cam.trform.pos.z+=1;
+            cam.trform.pos.x+=sin((M_PI/180)*(cam.trform.rot.y));
+            cam.trform.pos.z+=cos((M_PI/180)*(cam.trform.rot.y));
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
-            cam.trform.pos.z-=1;
+            cam.trform.pos.x-=sin((M_PI/180)*(cam.trform.rot.y));
+            cam.trform.pos.z-=cos((M_PI/180)*(cam.trform.rot.y));
         }
-
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
+            cam.trform.pos.x+=sin((M_PI/180)*(cam.trform.rot.y+90));
+            cam.trform.pos.z+=cos((M_PI/180)*(cam.trform.rot.y+90));
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
+            cam.trform.pos.x-=sin((M_PI/180)*(cam.trform.rot.y+90));
+            cam.trform.pos.z-=cos((M_PI/180)*(cam.trform.rot.y+90));
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Space)){
+            cam.trform.pos.y+=1;
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::C)){
+            cam.trform.pos.y-=1;
+        }
 
         //       window  mesh  fill color             outline color
         cam.draw(window, test, sf::Color(170,150,218),sf::Color(249,247,247)); //draw mesh;
