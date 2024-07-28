@@ -24,9 +24,11 @@ int main(){
     test.trform = tr;
     float angle;
 
-    //add_animation(&test.trform.rot.y, 360, 1000); //rotate mesh on 1000 ticks(he dont use deltatime)
+    add_animation(&test.trform.rot.y, 540, 1000); //rotate mesh on 1000 ticks(he dont use deltatime)
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "loading..."); //create window
+    sf::Mouse::setPosition(sf::Vector2i(window.getSize().x/2, window.getSize().y/2), window);
+
     window.setFramerateLimit(60); // set limit fps
     while (window.isOpen()) {
         sf::Event event;
@@ -42,18 +44,27 @@ int main(){
         *dt = nt/lt*1000;
         lt = nt;
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Right)){
-            cam.trform.rot.y+=1;
+        // movement
+        sf::Vector2i mpos = sf::Mouse::getPosition(window);
+        vec2 offset(mpos.x-(window.getSize().x/2), mpos.y-(window.getSize().y/2));
+        sf::Mouse::setPosition(sf::Vector2i(window.getSize().x/2, window.getSize().y/2), window);
+        cam.trform.rot.y+=offset.x*0.1;
+        cam.trform.rot.x+=offset.y*-0.1;
+     
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
+            cam.trform.pos.x+=1;
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Left)){
-            cam.trform.rot.y-=1;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
+            cam.trform.pos.x-=1;
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Up)){
-            cam.trform.rot.x+=1;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
+            cam.trform.pos.z+=1;
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Down)){
-            cam.trform.rot.x-=1;
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
+            cam.trform.pos.z-=1;
         }
+
+
         //       window  mesh  fill color             outline color
         cam.draw(window, test, sf::Color(170,150,218),sf::Color(249,247,247)); //draw mesh;
 

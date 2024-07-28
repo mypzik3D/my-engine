@@ -6,6 +6,7 @@ class dot{
     public:
         vec3f pos{0,0,0};
         vec3f glpos{0,0,0};
+        vec3f cmpos{0,0,0};
         dot(vec3f pos);
 };
 
