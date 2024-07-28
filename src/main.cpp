@@ -12,17 +12,19 @@ int main(){
     float* dt = new float(nt/lt);
     trform3 posit;
     camera cam(vec2(800, 600), 7, posit);
+    cam.clip_forward = 30;
+    cam.lengh = 3;
 
     trform3 tr;
-    tr.pos = vec3f(0, 0, 50); // position
-    tr.rot = vec3f(30, 0, 0);
+    tr.pos = vec3f(0, -50, 230); // position
+    tr.rot = vec3f(0, 180, 0);
     tr.scl = vec3f(10,10,10); // scale
     mesh test;// make cube mesh
-    load_obj_file("../obj/monkey.obj", test); // all object files in dir ../obj/ ~90% from 3dzavr sfml
+    load_obj_file("../obj/terrain-minecraft.obj", test); // all object files in dir ../obj/ ~90% from 3dzavr sfml
     test.trform = tr;
     float angle;
 
-    add_animation(&test.trform.rot.y, 360, 1000); //rotate mesh on 1000 ticks(he dont use deltatime)
+    //add_animation(&test.trform.rot.y, 360, 1000); //rotate mesh on 1000 ticks(he dont use deltatime)
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "loading..."); //create window
     window.setFramerateLimit(60); // set limit fps
