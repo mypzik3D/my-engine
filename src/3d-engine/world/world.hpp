@@ -9,6 +9,5 @@ class camera{
     	vec2 size{0,0};
         float clip_forward=10;
 	float lengh;
-	void draw(sf::RenderWindow& window, mesh cube, sf::Color fill = sf::Color(186,215,223, 200), sf::Color outline = sf::Color::White);
-
+	void draw(sf::RenderWindow& window, std::vector<mesh*> meshes, sf::Color outline);
 };

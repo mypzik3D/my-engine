@@ -15,6 +15,7 @@ class triangle{
         dot* dots[3];
         vec3f normal;
         vec3f glnorm;
+        vec3f cmnorm;
         sf::Color color;
     	triangle();
 };
@@ -28,6 +29,9 @@ class mesh{
 	void calc_dots();
 	triangle* add_triangle(vec3f pos1, vec3f pos2, vec3f pos3);
 	triangle* add_triangle(vec3f pos1, vec3f pos2, vec3f pos3, vec3f norm);
+        triangle* add_triangle(vec3f pos1, vec3f pos2, vec3f pos3, vec3f norm, sf::Color color);
+	triangle* add_triangle(dot* pos1, dot* pos2, dot* pos3, vec3f norm, sf::Color color);
+	triangle* add_triangle(dot* pos1, dot* pos2, dot* pos3, sf::Color color);
 	triangle* add_triangle(dot* pos1, dot* pos2, dot* pos3);
         void del_triangle(int index);
         void del_triangle(triangle& triangle);
@@ -36,4 +40,5 @@ class mesh{
 	mesh();
 };
 mesh cube(float size, vec3f offset, trform3 trform);
-void load_obj_file(const std::string& filename, mesh& mesh);
+void load_obj_file(const std::string& filename, mesh& mesh, sf::Color color = sf::Color(170,150,218));
+void load_obj_file_with_norm(const std::string& filename, const std::string& mtlname, mesh& mesh, sf::Color defcol= sf::Color(170,150,218));

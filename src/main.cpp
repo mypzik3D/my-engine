@@ -5,28 +5,42 @@
 #include <math.h>
 
 
-int main(){    
+int main(){   
+    std::vector<mesh*> meshes;
+
+
     sf::Clock deltime;
     float nt = 1;
     float lt = 0;
     float* dt = new float(nt/lt);
-    trform3 posit;
-    camera cam(vec2(800, 600), 7, posit);
+
+    camera cam(vec2(1200, 800), 7, trform3());
     cam.clip_forward = 30;
     cam.lengh = 5;
 
     trform3 tr;
-    tr.pos = vec3f(0, -40, 100); // position
+    tr.pos = vec3f(0, -100, 0); // position
     tr.rot = vec3f(0, 180, 0);
     tr.scl = vec3f(10,10,10); // scale
-    mesh test;// make cube mesh
-    load_obj_file("../obj/terrain-minecraft.obj", test); // all object files in dir ../obj/ ~90% from 3dzavr sfml
-    test.trform = tr;
+    mesh* test = new mesh;// make cube mesh
+    load_obj_file("../obj/terrain-minecraft.obj", *test); // all object files in dir ../obj/ ~90% from 3dzavr sfml
+    test->trform = tr;
+    trform3 tr2;
+    tr2.pos = vec3f(0, 0, 0); // position
+    tr2.rot = vec3f(0, 180, 0);
+    tr2.scl = vec3f(20,20,20); // scale
+    mesh* test2 = new mesh;// make cube mesh
+    load_obj_file_with_norm("../obj/monkey/green/monkey.obj", "../obj/monkey/green/monkey.mtl", *test2);
+    test2->trform = tr2;
+
+    meshes.push_back(test2);
+    meshes.push_back(test);
+
     float angle;
 
-    //add_animation(&test.trform.rot.y, 540, 1000); //rotate mesh on 1000 ticks(he dont use deltatime)
+    add_animation(&test2->trform.rot.y, 540, 1000); //rotate mesh on 1000 ticks(he dont use deltatime)
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "loading..."); //create window
+    sf::RenderWindow window(sf::VideoMode(1200, 800), "loading..."); //create window
     sf::Mouse::setPosition(sf::Vector2i(window.getSize().x/2, window.getSize().y/2), window);
 
     window.setFramerateLimit(60); // set limit fps
@@ -51,35 +65,36 @@ int main(){
         cam.trform.rot.x+=offset.y*-0.1;
      
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)){
-            cam.trform.pos.x+=sin((M_PI/180)*(cam.trform.rot.y));
-            cam.trform.pos.z+=cos((M_PI/180)*(cam.trform.rot.y));
+            cam.trform.pos.x+=sin((M_PI/180)*(cam.trform.rot.y))*4;
+            cam.trform.pos.z+=cos((M_PI/180)*(cam.trform.rot.y))*4;
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)){
-            cam.trform.pos.x-=sin((M_PI/180)*(cam.trform.rot.y));
-            cam.trform.pos.z-=cos((M_PI/180)*(cam.trform.rot.y));
+            cam.trform.pos.x-=sin((M_PI/180)*(cam.trform.rot.y))*4;
+            cam.trform.pos.z-=cos((M_PI/180)*(cam.trform.rot.y))*4;
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)){
-            cam.trform.pos.x+=sin((M_PI/180)*(cam.trform.rot.y+90));
-            cam.trform.pos.z+=cos((M_PI/180)*(cam.trform.rot.y+90));
+            cam.trform.pos.x+=sin((M_PI/180)*(cam.trform.rot.y+90))*4;
+            cam.trform.pos.z+=cos((M_PI/180)*(cam.trform.rot.y+90))*4;
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)){
-            cam.trform.pos.x-=sin((M_PI/180)*(cam.trform.rot.y+90));
-            cam.trform.pos.z-=cos((M_PI/180)*(cam.trform.rot.y+90));
+            cam.trform.pos.x-=sin((M_PI/180)*(cam.trform.rot.y+90))*4;
+            cam.trform.pos.z-=cos((M_PI/180)*(cam.trform.rot.y+90))*4;
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Space)){
-            cam.trform.pos.y+=1;
+            cam.trform.pos.y+=4;
         }
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::C)){
-            cam.trform.pos.y-=1;
+            cam.trform.pos.y-=4;
         }
 
-        //       window  mesh  fill color             outline color
-        cam.draw(window, test, sf::Color(170,150,218),sf::Color(249,247,247)); //draw mesh;
+
+        cam.draw(window, meshes ,sf::Color(0,0,0,0)); //draw meshes;
 
         update_animations();
         window.display();
     }
-    test.clear(); //clear mesh from memory
+    test->clear(); //clear mesh from memory
+    test2->clear();
     return 0;
 }
 
