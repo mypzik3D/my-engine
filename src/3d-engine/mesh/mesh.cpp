@@ -136,7 +136,7 @@ void mesh::calc_dots(){
         dots.at(i)->glpos = calc_dot_global(this->trform, dots.at(i)->pos); 
     }
     for(int i = 0; i < triangles.size(); i++){
-       triangles.at(i)->glnorm = triangles.at(i)->normal+this->trform.rot;
+       triangles.at(i)->glnorm = calc_dot_global(this->trform, triangles.at(i)->normal)-=this->trform.pos;
     }
 }
 void mesh::clear(){
@@ -275,7 +275,7 @@ void dprint(int level, std::string text){
         std::string type;
         iss >> type;
         if(type == "mtllib"){
-            dprint(1, " find mtl file");
+            dprint(1, " finded mtl file");
             std::ifstream mtlf(mtlname);
             std::string mline;
             while(std::getline(mtlf, mline)){
@@ -337,5 +337,5 @@ void dprint(int level, std::string text){
     }
     materials.clear();
     norms.clear();
-    dprint(2, "mesh sucsessfull inited!");
+    dprint(2, "mesh sucsessfull loaded!");
 }

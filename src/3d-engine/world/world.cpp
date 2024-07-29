@@ -29,9 +29,6 @@ void calc_local_dots(mesh msh, camera cam){
     for(int i = 0; i < msh.dots.size(); i++){
         msh.dots.at(i)->cmpos = calc_dot_local(cam.trform, msh.dots.at(i)->glpos); 
     }
-    for(int i = 0; i < msh.triangles.size(); i++){
-       msh.triangles.at(i)->cmnorm = msh.triangles.at(i)->glnorm-cam.trform.rot;
-    }
 }
 
 void draw_triangle(sf::RenderWindow& window, vec3f pos_dot1, vec3f pos_dot2, vec3f pos_dot3, sf::Color outline, sf::Color fill, camera cam){    
@@ -87,22 +84,38 @@ void camera::draw(sf::RenderWindow& window, std::vector<mesh*> meshes, sf::Color
         vec3f pos_dot2 = tris.at(at)->dots[1]->cmpos;
         vec3f pos_dot3 = tris.at(at)->dots[2]->cmpos;
 
-        vec3f ang1 = this->trform.rot;
-        vec3f ang2 = tris.at(at)->cmnorm;
+        vec3f vec(0,0,1);
+        vec3f ang1 = calc_dot_global(this->trform,vec)-this->trform.pos;
+        vec3f ang2 = tris.at(at)->glnorm;
 
         float scal = ang1.x*ang2.x+ang1.y*ang2.y+ang1.z*ang2.z;
         float lenght1 = lengh3(ang1);
         float lenght2 = lengh3(ang2);
         float ancos = scal/(lenght1*lenght2);
-        float ang = acos(ancos);
+        float ang = (ancos+1)*50;
 
         sf::Color s = tris.at(at)->color;
+        float r=s.r,g=s.g,b=s.b;
+        r-=ang;
+        g-=ang;
+        b-=ang;
+        if(r < 0)
+            r = 0;
+        if(g < 0)
+            g = 0;
+        if(b < 0)
+            b = 0;
+
+        if(ancos >= 0){
+            //tris.erase(tris.begin()+at);
+            //continue;
+        }
 
         if(pos_dot1.z <= this->clip_forward && pos_dot2.z <= this->clip_forward && pos_dot3.z <= this->clip_forward){
             tris.erase(tris.begin()+at);
             continue;
         }else{
-            draw_triangle(window,pos_dot1,pos_dot2,pos_dot3, outline, tris.at(at)->color, *this);
+            draw_triangle(window,pos_dot1,pos_dot2,pos_dot3, outline, sf::Color(r,g,b,s.a), *this);
             tris.erase(tris.begin()+at);
         }
 
