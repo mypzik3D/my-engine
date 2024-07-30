@@ -1,5 +1,5 @@
-#include "3d-engine/world/world.hpp"
-#include "3d-engine/animations/anim.hpp"
+#include "../../src/3d-engine/world/world.hpp"
+#include "../../src/3d-engine/animations/anim.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <math.h>
@@ -26,7 +26,7 @@ int main(){
     //create mesh;
     mesh* test = new mesh;
     test->trform = tr;
-    load_obj_file_with_norm("../obj/cube/cube.obj","../obj/cube/cube.mtl",*test);
+    load_obj_file_with_norm("../obj/cube.obj","../obj/cube.mtl",*test);
 
     //add mesh to massive
     meshes.push_back(test);
