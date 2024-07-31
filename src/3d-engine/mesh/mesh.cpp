@@ -132,12 +132,19 @@ triangle* mesh::add_triangle(vec3f pos1, vec3f pos2, vec3f pos3, vec3f norm, sf:
 
 
 void mesh::calc_dots(){
+    if(old.pos != trform.pos || old.rot != trform.pos || old.scl != trform.scl){
+        vec3f x(1,0,0),y(0,1,0),z(0,0,1);
+        ofx = calc_dot_global(this->trform, x);
+        ofy = calc_dot_global(this->trform, y);
+        ofz = calc_dot_global(this->trform, z);
+    }
     for(int i = 0; i < dots.size(); i++){
-        dots.at(i)->glpos = calc_dot_global(this->trform, dots.at(i)->pos); 
+        dots.at(i)->glpos = (ofx*dots.at(i)->pos.x+ofy*dots.at(i)->pos.y+ofz*dots.at(i)->pos.z)*this->trform.scl+this->trform.pos;
     }
     for(int i = 0; i < triangles.size(); i++){
-       triangles.at(i)->glnorm = calc_dot_global(this->trform, triangles.at(i)->normal)-=this->trform.pos;
+       triangles.at(i)->glnorm = (ofx*triangles.at(i)->normal.x+ofy*triangles.at(i)->normal.y+ofz*triangles.at(i)->normal.z);
     }
+    old = trform;
 }
 void mesh::clear(){
     for(int i = 0; i < triangles.size(); i++){
@@ -260,8 +267,8 @@ void dprint(int level, std::string text){
     std::cout << " " << text << std::endl;
 }
 
- void load_obj_file_with_norm(const std::string& filename, const std::string& mtlname, mesh& mesh, sf::Color defcol){
-    dprint(2, "start load object file");
+ void load_obj_norm_mtl_tri(const std::string& filename, const std::string& mtlname, mesh& mesh, sf::Color defcol){
+    dprint(1, "start load object file");
     
     std::ifstream file(filename);
     std::string line;
@@ -269,14 +276,16 @@ void dprint(int level, std::string text){
     std::vector<material*> materials;
     std::vector<vec3f*> norms;
 
-    material* matnow;
+    material* matnow=nullptr;
     while(std::getline(file, line)){
         std::istringstream iss(line);
         std::string type;
         iss >> type;
         if(type == "mtllib"){
-            dprint(1, " finded mtl file");
             std::ifstream mtlf(mtlname);
+            std::string namemtl;
+            iss >> namemtl;
+            std::cout << "  object use mtl file: " << namemtl << "\n";
             std::string mline;
             while(std::getline(mtlf, mline)){
                 std::istringstream issm(mline);
@@ -286,10 +295,10 @@ void dprint(int level, std::string text){
                 if(mtyp=="newmtl"){
                     mat = new material;
                     issm >> mat->name;
-                    std::cout << " > created new material: " << mat->name << "\n"; 
+                    std::cout << "  created new material: " << mat->name << "\n"; 
                 }else if(mat != nullptr && mtyp=="Kd"){
                     issm >> mat->r >> mat->g >> mat->b;
-                    std::cout << " > colors-> r:" << mat->r << ", g:" << mat->g << ", b:" << mat->b << ", alpha:" << mat->a << ";\n";
+                    std::cout << "  colors-> r:" << mat->r << ", g:" << mat->g << ", b:" << mat->b << ", alpha:" << mat->a << ";\n";
                 }else if(mat != nullptr && mtyp=="d"){
                     issm >> mat->a;
                     materials.push_back(mat);
@@ -335,7 +344,10 @@ void dprint(int level, std::string text){
                 mesh.add_triangle(mesh.dots.at(d[0]-1),mesh.dots.at(d[1]-1),mesh.dots.at(d[2]-1), *norms.at(n-1), color); 
         }
     }
+    for(int i = 0; i < materials.size(); i++){delete(materials.at(i));}
     materials.clear();
+    for(int i = 0; i < norms.size(); i++){delete(norms.at(i));}
     norms.clear();
-    dprint(2, "mesh sucsessfull loaded!");
+    std::cout << "  in mesh: " << mesh.dots.size() << " vertices, " << mesh.triangles.size() << " triangles\n";
+    dprint(1, "mesh sucsessfull loaded!");
 }

@@ -9,10 +9,6 @@ camera::camera(vec2 windsize, float lengh, trform3 trform){
 }
 camera::camera(){}
 
-vec3f calc_to_camera_pos(vec3f position, camera cam){
-    vec3f pos = calc_dot_local(cam.trform, position);
-    return pos;	
-}
 sf::Vector2f to_draw(sf::Vector2u size, vec3f pos, camera cam, float coef = 50){
     vec2f ret(0,0);
     double a = (pos.x*cam.size.x)/((pos.z*cam.size.x/2)/cam.lengh);
@@ -27,8 +23,20 @@ sf::Vector2f to_draw(sf::Vector2u size, vec3f pos, camera cam, float coef = 50){
 
 void calc_local_dots(mesh msh, camera cam){
     for(int i = 0; i < msh.dots.size(); i++){
-        msh.dots.at(i)->cmpos = calc_dot_local(cam.trform, msh.dots.at(i)->glpos); 
+        msh.dots.at(i)->cmpos = calc_dot_local(cam.trform, msh.dots.at(i)->glpos-cam.trform.pos); 
     }
+   /* 
+   // if(cam.trform.old.pos != trform.pos || old.rot != trform.pos || old.scl != trform.scl){
+        vec3f x(1,0,0),y(0,1,0),z(0,0,1);
+        vec3f ofx = calc_dot_local(cam.trform, x);
+        vec3f ofy = calc_dot_local(cam.trform, y);
+        vec3f ofz = calc_dot_local(cam.trform, z);
+    //}
+    for(int i = 0; i < msh.dots.size(); i++){
+        vec3f rp = msh.dots.at(i)->glpos-cam.trform.pos;
+        msh.dots.at(i)->cmpos = (ofx*rp.x+ofy*rp.y+ofz*rp.z)/cam.trform.scl;
+    }
+*/
 }
 
 void draw_triangle(sf::RenderWindow& window, vec3f pos_dot1, vec3f pos_dot2, vec3f pos_dot3, sf::Color outline, sf::Color fill, camera cam){    
@@ -79,20 +87,19 @@ void camera::draw(sf::RenderWindow& window, std::vector<mesh*> meshes, sf::Color
                 at = i;
             }
         }
+        vec3f pos_dot[3];
+        pos_dot[0] = tris.at(at)->dots[0]->cmpos;
+        pos_dot[1] = tris.at(at)->dots[1]->cmpos;
+        pos_dot[2] = tris.at(at)->dots[2]->cmpos;
 
-        vec3f pos_dot1 = tris.at(at)->dots[0]->cmpos;
-        vec3f pos_dot2 = tris.at(at)->dots[1]->cmpos;
-        vec3f pos_dot3 = tris.at(at)->dots[2]->cmpos;
-
-        vec3f vec(0,0,1);
-        vec3f ang1 = calc_dot_global(this->trform,vec)-this->trform.pos;
+        vec3f ang1 = norm(this->trform.pos-(tris.at(at)->dots[0]->glpos+tris.at(at)->dots[1]->glpos+tris.at(at)->dots[2]->glpos)/3);
         vec3f ang2 = tris.at(at)->glnorm;
 
         float scal = ang1.x*ang2.x+ang1.y*ang2.y+ang1.z*ang2.z;
         float lenght1 = lengh3(ang1);
         float lenght2 = lengh3(ang2);
         float ancos = scal/(lenght1*lenght2);
-        float ang = (ancos+1)*50;
+        float ang = (1-(ancos))*70;
 
         sf::Color s = tris.at(at)->color;
         float r=s.r,g=s.g,b=s.b;
@@ -101,27 +108,69 @@ void camera::draw(sf::RenderWindow& window, std::vector<mesh*> meshes, sf::Color
         b-=ang;
         if(r < 0)
             r = 0;
+        else if(r > 255)
+            r = 255;
         if(g < 0)
             g = 0;
+        else if(g > 255)
+            g = 255;
         if(b < 0)
             b = 0;
+        else if(b > 255)
+        b = 255;
 
-        if(ancos >= 0){
-            //tris.erase(tris.begin()+at);
-            //continue;
+        if(ancos < 0){
+            tris.erase(tris.begin()+at);
+            continue;
         }
 
-        if(pos_dot1.z <= this->clip_forward && pos_dot2.z <= this->clip_forward && pos_dot3.z <= this->clip_forward){
+        if(pos_dot[0].z <= this->clip_forward && pos_dot[1].z <= this->clip_forward && pos_dot[2].z <= this->clip_forward){
+            tris.erase(tris.begin()+at);
+            continue;
+        }else if(pos_dot[0].z <= this->clip_forward && pos_dot[1].z <= this->clip_forward  || pos_dot[1].z <= this->clip_forward && pos_dot[2].z <= this->clip_forward  || pos_dot[2].z <= this->clip_forward && pos_dot[0].z <= this->clip_forward){
+            int dfront, nf1, nf2;
+            if(pos_dot[0].z  > this->clip_forward){dfront = 0; nf1 = 1; nf2 = 2;}
+            if(pos_dot[1].z  > this->clip_forward){dfront = 1; nf1 = 0; nf2 = 2;}
+            if(pos_dot[2].z  > this->clip_forward){dfront = 2; nf1 = 0; nf2 = 1;}
+            vec3f betwd[2];
+
+            float coef = (this->clip_forward-pos_dot[dfront].z)/(pos_dot[nf1].z-pos_dot[dfront].z);
+            betwd[0].x = (pos_dot[nf1].x-pos_dot[dfront].x)*coef+pos_dot[dfront].x;
+            betwd[0].y = (pos_dot[nf1].y-pos_dot[dfront].y)*coef+pos_dot[dfront].y;
+            betwd[0].z = (pos_dot[nf1].z-pos_dot[dfront].z)*coef+pos_dot[dfront].z;
+            coef = (this->clip_forward-pos_dot[dfront].z)/(pos_dot[nf2].z-pos_dot[dfront].z);
+            betwd[1].x = (pos_dot[nf2].x-pos_dot[dfront].x)*coef+pos_dot[dfront].x;
+            betwd[1].y = (pos_dot[nf2].y-pos_dot[dfront].y)*coef+pos_dot[dfront].y;
+            betwd[1].z = (pos_dot[nf2].z-pos_dot[dfront].z)*coef+pos_dot[dfront].z;
+    
+            draw_triangle(window,betwd[0],pos_dot[dfront],betwd[1], outline, sf::Color(r,g,b,s.a), *this);
+            
+            tris.erase(tris.begin()+at);
+            continue;
+        }else if(pos_dot[0].z <= this->clip_forward || pos_dot[1].z <= this->clip_forward  || pos_dot[2].z <= this->clip_forward){
+            int dfront, nf1, nf2;
+            if(pos_dot[0].z  <= this->clip_forward){dfront = 0; nf1 = 1; nf2 = 2;}
+            if(pos_dot[1].z  <= this->clip_forward){dfront = 1; nf1 = 0; nf2 = 2;}
+            if(pos_dot[2].z  <= this->clip_forward){dfront = 2; nf1 = 0; nf2 = 1;}
+            vec3f betwd[2];
+
+            float coef = (this->clip_forward-pos_dot[dfront].z)/(pos_dot[nf1].z-pos_dot[dfront].z);
+            betwd[0].x = (pos_dot[nf1].x-pos_dot[dfront].x)*coef+pos_dot[dfront].x;
+            betwd[0].y = (pos_dot[nf1].y-pos_dot[dfront].y)*coef+pos_dot[dfront].y;
+            betwd[0].z = (pos_dot[nf1].z-pos_dot[dfront].z)*coef+pos_dot[dfront].z;
+            coef = (this->clip_forward-pos_dot[dfront].z)/(pos_dot[nf2].z-pos_dot[dfront].z);
+            betwd[1].x = (pos_dot[nf2].x-pos_dot[dfront].x)*coef+pos_dot[dfront].x;
+            betwd[1].y = (pos_dot[nf2].y-pos_dot[dfront].y)*coef+pos_dot[dfront].y;
+            betwd[1].z = (pos_dot[nf2].z-pos_dot[dfront].z)*coef+pos_dot[dfront].z;
+    
+            draw_triangle(window,pos_dot[nf1],pos_dot[nf2],betwd[0], outline, sf::Color(r,g,b,s.a), *this);
+            draw_triangle(window,betwd[0],pos_dot[nf2],betwd[1], outline, sf::Color(r,g,b,s.a), *this);
+
             tris.erase(tris.begin()+at);
             continue;
         }else{
-            draw_triangle(window,pos_dot1,pos_dot2,pos_dot3, outline, sf::Color(r,g,b,s.a), *this);
+            draw_triangle(window,pos_dot[0],pos_dot[1],pos_dot[2], outline, sf::Color(r,g,b,s.a), *this);
             tris.erase(tris.begin()+at);
         }
-
-
-            //if(pos_dot1.z > 0 || pos_dot2.z > 0 || pos_dot3.z > 0){
-            
-        //}
     }
 }

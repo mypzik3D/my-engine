@@ -74,16 +74,18 @@ float lengh3(vec3f vec){
     lengh = sqrt(pow(lengh, 2)+pow(vec.z, 2));
     return lengh;
 }
+vec3f norm(vec3f vec){
+    float l = lengh3(vec);
+    return vec/l;
+}
 
 vec3f calc_dot_global(trform3& trform, vec3f& pos){
     vec3f vec(0,0,0);
     if(pos.x == 0 && pos.y == 0 && pos.z == 0){
-        vec*=trform.scl;
-        vec+=trform.pos;
         return vec;
     }else{
         vec2f coef(0,0);
-        vec2d vecdot(pos.x*trform.scl.x, pos.y*trform.scl.y);
+        vec2d vecdot(pos.x, pos.y);
         if(vecdot.x >= 0)
             coef.x = 1;
         else{
@@ -116,7 +118,7 @@ vec3f calc_dot_global(trform3& trform, vec3f& pos){
             //printf("%f\n",sin(deg_to_rad(deg+trform.rot.z)));
         }
 
-        vecdot = vec2d(vec.x, pos.z*trform.scl.z);
+        vecdot = vec2d(vec.x, pos.z);
         if(vecdot.x >= 0)
             coef.x = 1;
         else{
@@ -180,13 +182,11 @@ vec3f calc_dot_global(trform3& trform, vec3f& pos){
             //printf("%f\n",sin(deg_to_rad(deg+trform.rot.x)));
 
         }
-        vec+=trform.pos;
     }
     return vec;
 }
 vec3f calc_dot_local(trform3& trform, vec3f pos){
     vec3f vec;
-    pos-=trform.pos;
     if(pos.x == 0 && pos.y == 0 && pos.z == 0){
         return vec;
     }else{

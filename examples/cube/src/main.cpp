@@ -1,5 +1,5 @@
-#include "../../src/3d-engine/world/world.hpp"
-#include "../../src/3d-engine/animations/anim.hpp"
+#include "../../../src/3d-engine/world/world.hpp"
+#include "../../../src/3d-engine/animations/anim.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <math.h>
@@ -14,19 +14,19 @@ int main(){
     float* dt = new float(nt/lt);
     //create camera
     camera cam(vec2(1200, 800), 7, trform3());
-    cam.clip_forward = 5;
+    cam.clip_forward = 1;
     cam.lengh = 5;
 
 
     //transform for mesh
     trform3 tr;
-    tr.scl = vec3f(20,20,20);
+    tr.scl = vec3f(10,10,10);
     tr.rot = vec3f(0,180,0);
-    tr.pos = vec3f(0,0,100);
+    tr.pos = vec3f(0,-20,100);
     //create mesh;
     mesh* test = new mesh;
     test->trform = tr;
-    load_obj_file_with_norm("../obj/cube.obj","../obj/cube.mtl",*test);
+    load_obj_norm_mtl_tri("../obj/terrain.obj", "../obj/terrain.mtl",*test);
 
     //add mesh to massive
     meshes.push_back(test);
@@ -42,7 +42,7 @@ int main(){
         while (window.pollEvent(event))
             if (event.type == sf::Event::Closed)
                 window.close();
-        window.clear();
+        window.clear(sf::Color::White);
         
         // calculating fps
         nt = deltime.restart().asSeconds();
@@ -82,7 +82,7 @@ int main(){
         }
 
 
-        cam.draw(window, meshes ,sf::Color(255,255,255,0)); //draw massive;
+        cam.draw(window, meshes ,sf::Color(255,0,255,0)); //draw massive;
         update_animations();
         window.display();
     }
