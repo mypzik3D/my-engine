@@ -26,7 +26,7 @@ int main(){
     //create mesh;
     mesh* test = new mesh;
     test->trform = tr;
-    load_obj_norm_mtl_tri("../obj/terrain.obj", "../obj/terrain.mtl",*test);
+    load_obj_norm_mtl_tri("../obj/cube.obj", "../obj/cube.mtl",*test);
 
     //add mesh to massive
     meshes.push_back(test);
