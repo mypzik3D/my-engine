@@ -132,12 +132,10 @@ triangle* mesh::add_triangle(vec3f pos1, vec3f pos2, vec3f pos3, vec3f norm, sf:
 
 
 void mesh::calc_dots(){
-    if(old.pos != trform.pos || old.rot != trform.pos || old.scl != trform.scl){
-        vec3f x(1,0,0),y(0,1,0),z(0,0,1);
-        ofx = calc_dot_global(this->trform, x);
-        ofy = calc_dot_global(this->trform, y);
-        ofz = calc_dot_global(this->trform, z);
-    }
+    vec3f x(1,0,0),y(0,1,0),z(0,0,1);
+    ofx = calc_dot_global(this->trform, x);
+    ofy = calc_dot_global(this->trform, y);
+    ofz = calc_dot_global(this->trform, z);
     for(int i = 0; i < dots.size(); i++){
         dots.at(i)->glpos = (ofx*dots.at(i)->pos.x+ofy*dots.at(i)->pos.y+ofz*dots.at(i)->pos.z)*this->trform.scl+this->trform.pos;
     }

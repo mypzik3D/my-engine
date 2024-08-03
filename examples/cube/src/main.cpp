@@ -21,7 +21,7 @@ int main(){
     //transform for mesh
     trform3 tr;
     tr.scl = vec3f(10,10,10);
-    tr.rot = vec3f(0,180,0);
+    tr.rot = vec3f(0,0,0);
     tr.pos = vec3f(0,-20,100);
     //create mesh;
     mesh* test = new mesh;
@@ -31,7 +31,7 @@ int main(){
     //add mesh to massive
     meshes.push_back(test);
 
-    //add_animation(&test->trform.rot.y, 3600, 2000);
+    add_animation(&test->trform.rot.y, 360, 400);
 
     sf::RenderWindow window(sf::VideoMode(1200, 800), "loading..."); //create window
     sf::Mouse::setPosition(sf::Vector2i(window.getSize().x/2, window.getSize().y/2), window);
