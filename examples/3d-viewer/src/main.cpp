@@ -13,7 +13,9 @@ int main(){
     float lt = 0;
     float* dt = new float(nt/lt);
     //create camera
-    camera cam(vec2(1200, 800), 7, trform3());
+    trform3 campos;
+    campos.pos = vec3f(0,0,-20);
+    camera cam(vec2(1200, 800), 7, campos);
     cam.clip_forward = 1;
     cam.lengh = 5;
 
