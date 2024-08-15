@@ -26,12 +26,12 @@ int main(){
     //create mesh;
     mesh* test = new mesh;
     test->trform = tr;
-    load_obj_norm_mtl_tri("../obj/cube.obj", "../obj/cube.mtl",*test);
+    load_obj_file("../obj/icosphere.obj",*test);
 
     //add mesh to massive
     meshes.push_back(test);
 
-    add_animation(&test->trform.rot.y, 360, 400);
+    //add_animation(&test->trform.rot.y, 360, 400);
 
     sf::RenderWindow window(sf::VideoMode(1200, 800), "loading..."); //create window
     sf::Mouse::setPosition(sf::Vector2i(window.getSize().x/2, window.getSize().y/2), window);

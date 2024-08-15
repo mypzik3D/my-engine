@@ -45,5 +45,4 @@ class mesh{
 	mesh();
 };
 mesh cube(float size, vec3f offset, trform3 trform);
-void load_obj_file(const std::string& filename, mesh& mesh, sf::Color color = sf::Color(170,150,218));
-void load_obj_norm_mtl_tri(const std::string& filename, const std::string& mtlname, mesh& mesh, sf::Color defcol= sf::Color(170,150,218));
+void load_obj_file(const std::string& filename, mesh& mesh, sf::Color defcol= sf::Color(170,150,218));

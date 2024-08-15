@@ -233,24 +233,6 @@ mesh cube(float size, vec3f offset, trform3 trform){
     printf("> created cube mesh\n");
     return cube;
 }
-void load_obj_file(const std::string& filename, mesh& mesh, sf::Color color){
-    std::ifstream file(filename);
-    std::string line;
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        char type;
-        iss >> type;
-        if (type == 'v') {
-            float x, y, z;
-            iss >> x >> y >> z;
-            mesh.dots.push_back(new dot(vec3f(x, y, z)));
-        } else if (type == 'f') {
-            int dot1, dot2, dot3;
-            iss >> dot1 >> dot2 >> dot3;
-            mesh.add_triangle(mesh.dots.at(dot1 - 1), mesh.dots.at(dot2 - 1), mesh.dots.at(dot3 - 1), color); 
-        }
-    }
-}
 
 class material{
     public:
@@ -265,11 +247,13 @@ void dprint(int level, std::string text){
     std::cout << " " << text << std::endl;
 }
 
- void load_obj_norm_mtl_tri(const std::string& filename, const std::string& mtlname, mesh& mesh, sf::Color defcol){
+ void load_obj_file(const std::string& filename, mesh& mesh, sf::Color defcol){
     dprint(1, "start load object file");
     
     std::ifstream file(filename);
     std::string line;
+
+    bool uvflag;
 
     std::vector<material*> materials;
     std::vector<vec3f*> norms;
@@ -280,10 +264,26 @@ void dprint(int level, std::string text){
         std::string type;
         iss >> type;
         if(type == "mtllib"){
-            std::ifstream mtlf(mtlname);
             std::string namemtl;
             iss >> namemtl;
-            std::cout << "  object use mtl file: " << namemtl << "\n";
+            std::string mtlfname;
+            int countsl = 0;
+            for(int i = 0; i < filename.size(); i++){
+                if(filename.at(i) == '/')
+                    countsl++;
+            }
+            int prcount = 0;
+            for(int i = 0; i < filename.size(); i++){
+                mtlfname+=filename.at(i);
+                if(filename.at(i) == '/')
+                    prcount++;
+                if(prcount>=countsl){
+                    mtlfname+=namemtl;
+                    break;
+                }
+            }
+            std::ifstream mtlf(mtlfname);
+            std::cout << "  object use mtl file: " << namemtl << " in dir: " << mtlfname << "\n";
             std::string mline;
             while(std::getline(mtlf, mline)){
                 std::istringstream issm(mline);
@@ -311,6 +311,9 @@ void dprint(int level, std::string text){
             float x,y,z;
             iss >> x >> y >> z;
             norms.push_back(new vec3f(x,y,z));
+        }else if(type == "vt" && uvflag == false){
+            std::cout << "  object use UV - skipped: " << "\n";
+            uvflag = true;
         }else if(type == "usemtl"){
             std::string nam;
             iss >> nam;
@@ -327,10 +330,16 @@ void dprint(int level, std::string text){
                     std::replace(str.begin(), str.end(), '/', ' ');
                     std::istringstream index_stream(str);
 
+                    int non;
                     index_stream >> d[i];
-
-                    if(i==2)
-                        index_stream >> n;
+                    if(i==2){
+                        if(uvflag){
+                            index_stream >> non;
+                            index_stream >> n;
+                        }else{
+                            index_stream >> n;   
+                        }
+                    }
                 }
 
                 sf::Color color;
