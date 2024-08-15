@@ -20,18 +20,18 @@ int main(){
 
     //transform for mesh
     trform3 tr;
-    tr.scl = vec3f(10,10,10);
+    tr.scl = vec3f(20,20,20);
     tr.rot = vec3f(0,0,0);
-    tr.pos = vec3f(0,-20,100);
+    tr.pos = vec3f(0,0,100);
     //create mesh;
     mesh* test = new mesh;
     test->trform = tr;
-    load_obj_file("../obj/icosphere.obj",*test);
+    load_obj_file("../obj/icosphere.obj",*test); //input your object file dir
 
     //add mesh to massive
     meshes.push_back(test);
 
-    //add_animation(&test->trform.rot.y, 360, 400);
+    add_animation(&test->trform.rot.y, 360, 400);
 
     sf::RenderWindow window(sf::VideoMode(1200, 800), "loading..."); //create window
     sf::Mouse::setPosition(sf::Vector2i(window.getSize().x/2, window.getSize().y/2), window);

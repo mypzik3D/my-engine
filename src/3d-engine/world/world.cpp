@@ -68,7 +68,7 @@ void draw_triangle(sf::RenderWindow& window, vec3f pos_dot1, vec3f pos_dot2, vec
 void camera::draw(sf::RenderWindow& window, std::vector<mesh*> meshes, sf::Color outline){
     std::vector<triangle*> tris;
     for(int i = 0; i < meshes.size(); i++){
-        meshes.at(i)->calc_dots();
+        meshes.at(i)->calc_dots(this->trform.pos);
         calc_local_dots(*meshes.at(i), *this);
         for(int j = 0; j < meshes.at(i)->triangles.size(); j++){
             tris.push_back(meshes.at(i)->triangles.at(j));
@@ -95,11 +95,8 @@ void camera::draw(sf::RenderWindow& window, std::vector<mesh*> meshes, sf::Color
         vec3f ang1 = norm(this->trform.pos-(tris.at(at)->dots[0]->glpos+tris.at(at)->dots[1]->glpos+tris.at(at)->dots[2]->glpos)/3);
         vec3f ang2 = tris.at(at)->glnorm;
 
-        float scal = ang1.x*ang2.x+ang1.y*ang2.y+ang1.z*ang2.z;
-        float lenght1 = lengh3(ang1);
-        float lenght2 = lengh3(ang2);
-        float ancos = scal/(lenght1*lenght2);
-        float ang = (1-(ancos))*70;
+        float ang = tris.at(at)->cmang.x;
+        float ancos = tris.at(at)->cmang.y;
 
         sf::Color s = tris.at(at)->color;
         float r=s.r,g=s.g,b=s.b;

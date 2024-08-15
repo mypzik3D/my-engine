@@ -131,17 +131,34 @@ triangle* mesh::add_triangle(vec3f pos1, vec3f pos2, vec3f pos3, vec3f norm, sf:
 }
 
 
-void mesh::calc_dots(){
+void mesh::calc_dots(vec3f campos){
+    for(int i = 0; i < dots.size(); i++){
+        dots.at(i)->iscalc = false;
+    }
     vec3f x(1,0,0),y(0,1,0),z(0,0,1);
     ofx = calc_dot_global(this->trform, x);
     ofy = calc_dot_global(this->trform, y);
     ofz = calc_dot_global(this->trform, z);
-    for(int i = 0; i < dots.size(); i++){
-        dots.at(i)->glpos = (ofx*dots.at(i)->pos.x+ofy*dots.at(i)->pos.y+ofz*dots.at(i)->pos.z)*this->trform.scl+this->trform.pos;
-    }
+
     for(int i = 0; i < triangles.size(); i++){
-       triangles.at(i)->glnorm = (ofx*triangles.at(i)->normal.x+ofy*triangles.at(i)->normal.y+ofz*triangles.at(i)->normal.z);
+        triangles.at(i)->glnorm = (ofx*triangles.at(i)->normal.x+ofy*triangles.at(i)->normal.y+ofz*triangles.at(i)->normal.z);
+        vec3f ang1 = norm(campos-(triangles.at(i)->dots[0]->glpos+triangles.at(i)->dots[1]->glpos+triangles.at(i)->dots[2]->glpos)/3);
+        vec3f ang2 = triangles.at(i)->glnorm;
+ 
+        float scal = ang1.x*ang2.x+ang1.y*ang2.y+ang1.z*ang2.z;
+        float lenght1 = lengh3(ang1);
+        float lenght2 = lengh3(ang2);
+        float ancos = scal/(lenght1*lenght2);
+        float ang = (1-(ancos))*70;
+        triangles.at(i)->cmang = vec2f(ang,ancos); 
+        for(int j = 0; j < 3; j++){
+            if(ancos > 0 && !triangles.at(i)->dots[j]->iscalc){
+                triangles.at(i)->dots[j]->glpos = (ofx*triangles.at(i)->dots[j]->pos.x+ofy*triangles.at(i)->dots[j]->pos.y+ofz*triangles.at(i)->dots[j]->pos.z)*this->trform.scl+this->trform.pos;
+                triangles.at(i)->dots[j]->iscalc = true;
+            }
+        }
     }
+
     old = trform;
 }
 void mesh::clear(){

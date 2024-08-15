@@ -7,6 +7,7 @@ class dot{
         vec3f pos{0,0,0};
         vec3f glpos{0,0,0};
         vec3f cmpos{0,0,0};
+        bool iscalc;
         dot(vec3f pos);
 };
 
@@ -15,7 +16,7 @@ class triangle{
         dot* dots[3];
         vec3f normal;
         vec3f glnorm;
-        vec3f cmnorm;
+        vec2f cmang;
         sf::Color color;
     	triangle();
 };
@@ -31,7 +32,7 @@ class mesh{
         std::vector<dot*> dots;
 	std::vector<triangle*> triangles;
 	
-	void calc_dots();
+	void calc_dots(vec3f campos);
 	triangle* add_triangle(vec3f pos1, vec3f pos2, vec3f pos3);
 	triangle* add_triangle(vec3f pos1, vec3f pos2, vec3f pos3, vec3f norm);
         triangle* add_triangle(vec3f pos1, vec3f pos2, vec3f pos3, vec3f norm, sf::Color color);
