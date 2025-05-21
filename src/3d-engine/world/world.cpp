@@ -2,6 +2,12 @@
 #include <math.h>
 #include <iostream>
 
+camera::camera(vec2 windsize, vec2 windpos, float lengh, trform3 trform){
+    this->size = windsize;
+    this->pos = windpos;
+    this->lengh = lengh;
+    this->trform=trform;
+}
 camera::camera(vec2 windsize, float lengh, trform3 trform){
     this->size = windsize;
     this->lengh = lengh;
@@ -40,28 +46,23 @@ void calc_local_dots(mesh msh, camera cam){
 }
 
 void draw_triangle(sf::RenderWindow& window, vec3f pos_dot1, vec3f pos_dot2, vec3f pos_dot3, sf::Color outline, sf::Color fill, camera cam){    
-        sf::Vertex lin1[2] = {
-            sf::Vertex(to_draw(window.getSize(), pos_dot1, cam), outline),
-            sf::Vertex(to_draw(window.getSize(), pos_dot2, cam), outline),
-        };
-        sf::Vertex lin2[2] = {
-            sf::Vertex(to_draw(window.getSize(), pos_dot2, cam), outline),
-            sf::Vertex(to_draw(window.getSize(), pos_dot3, cam), outline),
-        };
-        sf::Vertex lin3[2] = {
-            sf::Vertex(to_draw(window.getSize(), pos_dot3, cam), outline),
-            sf::Vertex(to_draw(window.getSize(), pos_dot1, cam), outline),
-        };
+        sf::VertexArray dtri(sf::PrimitiveType::TriangleStrip, 3);
 
-        sf::Vertex polygon[3] = {
-            sf::Vertex(to_draw(window.getSize(), pos_dot1, cam), fill),
-            sf::Vertex(to_draw(window.getSize(), pos_dot2, cam), fill),
-            sf::Vertex(to_draw(window.getSize(), pos_dot3, cam), fill),
-        };
-        window.draw(polygon, 3, sf::PrimitiveType::TriangleFan);
-        window.draw(lin1, 2, sf::Lines);
-        window.draw(lin2, 2, sf::Lines);
-        window.draw(lin3, 2, sf::Lines);
+        dtri[0].position = to_draw(window.getSize(), pos_dot1, cam);
+        dtri[0].color = fill;
+        dtri[1].position = to_draw(window.getSize(), pos_dot2, cam);
+        dtri[1].color = fill;
+        dtri[2].position = to_draw(window.getSize(), pos_dot3, cam);
+        dtri[2].color = fill;
+        window.draw(dtri);
+        dtri.setPrimitiveType(sf::PrimitiveType::LineStrip);
+        dtri[0].position = to_draw(window.getSize(), pos_dot1, cam);
+        dtri[0].color = outline;
+        dtri[1].position = to_draw(window.getSize(), pos_dot2, cam);
+        dtri[1].color = outline;
+        dtri[2].position = to_draw(window.getSize(), pos_dot3, cam);
+        dtri[2].color = outline;
+        window.draw(dtri);
 }
 
 
@@ -171,3 +172,4 @@ void camera::draw(sf::RenderWindow& window, std::vector<mesh*> meshes, sf::Color
         }
     }
 }
+

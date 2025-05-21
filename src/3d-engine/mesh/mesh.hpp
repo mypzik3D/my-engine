@@ -19,6 +19,12 @@ class triangle{
         vec2f cmang;
         sf::Color color;
     	triangle();
+        ~triangle(){
+            delete dots[0];
+            delete dots[1];
+            delete dots[2];
+            delete this;
+        };
 };
 
 class mesh{

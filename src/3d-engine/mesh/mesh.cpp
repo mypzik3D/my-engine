@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 
 triangle::triangle(){
 }
@@ -165,9 +166,7 @@ void mesh::clear(){
     for(int i = 0; i < triangles.size(); i++){
         delete(triangles.at(i));
     }
-    for(int a = 0; a < dots.size(); a++){
-        delete(dots.at(a));
-    }
+    delete this;
 }
 
 mesh cube(float size, vec3f offset, trform3 trform){
@@ -270,7 +269,7 @@ void dprint(int level, std::string text){
     std::ifstream file(filename);
     std::string line;
 
-    bool uvflag;
+    bool uvflag=false;
 
     std::vector<material*> materials;
     std::vector<vec3f*> norms;
@@ -328,7 +327,7 @@ void dprint(int level, std::string text){
             float x,y,z;
             iss >> x >> y >> z;
             norms.push_back(new vec3f(x,y,z));
-        }else if(type == "vt" && uvflag == false){
+        }else if(type == "vt" && !uvflag){
             std::cout << "  object use UV - skipped: " << "\n";
             uvflag = true;
         }else if(type == "usemtl"){
@@ -341,12 +340,11 @@ void dprint(int level, std::string text){
             }  
         }else if(type == "f"){
             std::string str;
-                int d[3],n;
+                int d[3],n=0;
                 for(int i = 0; i < 3; i++){
                     iss>>str;
                     std::replace(str.begin(), str.end(), '/', ' ');
                     std::istringstream index_stream(str);
-
                     int non;
                     index_stream >> d[i];
                     if(i==2){
@@ -354,11 +352,10 @@ void dprint(int level, std::string text){
                             index_stream >> non;
                             index_stream >> n;
                         }else{
-                            index_stream >> n;   
+                            index_stream >> n;  
                         }
                     }
                 }
-
                 sf::Color color;
                 if(matnow != nullptr){
                     color = sf::Color(matnow->r*255,matnow->g*255,matnow->b*255,matnow->a*255);

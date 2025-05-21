@@ -4,6 +4,7 @@
 #include <iostream>
 #include <math.h>
 
+#define OUTLINE sf::Color(0,0,0,255)
 
 int main(){   
     std::vector<mesh*> meshes;
@@ -28,25 +29,25 @@ int main(){
     //create mesh;
     mesh* test = new mesh;
     test->trform = tr;
-    load_obj_file("../obj/icosphere.obj",*test); //input your object file dir
+    load_obj_file("../obj/cube.obj",*test); //input your object file dir
 
     //add mesh to massive
     meshes.push_back(test);
 
     add_animation(&test->trform.rot.y, 360, 400);
+    add_animation(&test->trform.rot.z, 360, 400);
 
-    sf::RenderWindow window(sf::VideoMode(1200, 800), "loading..."); //create window
+    sf::RenderWindow window(sf::VideoMode({1200, 800}), "loading..."); //create window
     sf::Mouse::setPosition(sf::Vector2i(window.getSize().x/2, window.getSize().y/2), window);
 
     window.setFramerateLimit(60); // set limit fps
-    while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event))
-            if (event.type == sf::Event::Closed)
+    while (window.isOpen()){
+        while (const std::optional event = window.pollEvent())
+            if (event->is<sf::Event::Closed>())
                 window.close();
-        window.clear(sf::Color::White);
         
         // calculating fps
+        window.clear(sf::Color::White);
         nt = deltime.restart().asSeconds();
         float fps =(1.f/nt-lt);
         window.setTitle("3D, real 3D! [FPS:"+std::to_string((int)fps)+"]"); //rename window title
@@ -57,6 +58,7 @@ int main(){
         sf::Vector2i mpos = sf::Mouse::getPosition(window);
         vec2 offset(mpos.x-(window.getSize().x/2), mpos.y-(window.getSize().y/2));
         sf::Mouse::setPosition(sf::Vector2i(window.getSize().x/2, window.getSize().y/2), window);
+        
         cam.trform.rot.y+=offset.x*0.1;
         cam.trform.rot.x+=offset.y*-0.1;
      
@@ -84,9 +86,12 @@ int main(){
         }
 
 
-        cam.draw(window, meshes ,sf::Color(255,0,255,0)); //draw massive;
+        cam.draw(window, meshes ,OUTLINE); //draw massive;
         update_animations();
         window.display();
+    }
+    for(int i = 0; i < meshes.size(); i++){
+        meshes.at(i)->clear();
     }
     return 0;
 }
