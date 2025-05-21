@@ -2,7 +2,7 @@
 
 ## About
  I made this engine for fun\
- he use only CPU, and he so slow\
+ he use only CPU, and he so slow
 
   movement in 3d-viewer:\
   W, A, S, D - move\
@@ -10,11 +10,11 @@
 
 ## How to build:
  ### in linux:
- example: build example, yes\
+ example: build example, yes
 
-dependencies:\
-`sfml open-al`
-build:\
+dependencies:
+`sfml open-al`\
+build:
 ```
  cd ./examples/cube/  
  mkdir build && cd build  
