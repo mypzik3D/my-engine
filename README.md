@@ -16,13 +16,13 @@ dependencies:
 `sfml open-al`\
 build:
 ```
- cd ./examples/cube/  
+ cd ./examples/3d-viewer/  
  mkdir build && cd build  
  cmake .. && make  
 ```
   ### in windows
 ```
-cd .\examples\cube\
+cd .\examples\3d-viewer\
 mkdir build && cd build
 cmake .. && make
 ```
